@@ -5,14 +5,12 @@
 #include <errno.h>
 #include <limits.h>
 #include <string.h>
-#include <sys/ioctl.h>
 
 #define INOTIFY_BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 
 ERL_NIF_TERM mk_atom(ErlNifEnv*,const char*);
 ERL_NIF_TERM mk_error(ErlNifEnv*, const char*);
 ERL_NIF_TERM mk_errno(ErlNifEnv*);
-
 
 static ERL_NIF_TERM init(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {

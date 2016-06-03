@@ -13,7 +13,7 @@ good_to_go(Folder) -> supervisor:start_child({global, scv_sup}, [Folder]).
 
 start()-> start(#{}).
 start(#{}=Opts) ->
-    SrcPaths = maps:get(source_paths, Opts, ["./src"]),
+    SrcPaths = maps:get(source_paths, Opts, ["./src", "./lib"]),
     BeamPath = maps:get(beam_path, Opts, "./ebin"),
     RemoteCompile = maps:get(remote_compile, Opts, true),
     RemoteNodes = maps:get(remote_nodes, Opts, []),
@@ -57,7 +57,10 @@ spawn_initial(Folders) ->
 
 recurse_all_folders(PathList) when is_list(PathList) ->
     lists:foldl(fun(Path, Acc) ->
-            recurse_all_folders(Path, Acc)
+            case filelib:is_dir(Path) of
+                true -> recurse_all_folders(Path, Acc);
+                false -> Acc
+            end
         end,
         [],
         PathList

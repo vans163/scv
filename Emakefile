@@ -1,10 +1,4 @@
-{"./src/*",
-    [debug_info,
-        {outdir, "./ebin"}
-    ]
-}.
-
-{"./src/*/*",
+{"./src/**/*",
     [debug_info,
         {outdir, "./ebin"}
     ]

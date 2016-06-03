@@ -2,12 +2,17 @@
 # scv
 Erlang /w Elixir, automated distributed build system.
 
+### Point
+SCV was made to give you a true REPL experience.  
+Anytime you save a file all the changes you made get hotloaded into your local and all remote nodes.  
+Now you have a space construction vehicle to go along with your space language :)
+
 ### Usage
 ```
 scv:start().  %Default arguments
 
 scv:start(#{
-  source_paths => ["./src"],
+  source_paths => ["./src", "./lib"],
   beam_path => "./ebin",
   remote_compile => true,
   remote_nodes => [],
