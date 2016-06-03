@@ -1,0 +1,1 @@
+erl +sbt tnnps +K true -pa "./ebin/"
