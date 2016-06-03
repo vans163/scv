@@ -7,6 +7,9 @@ SCV was made to give you a true REPL experience.
 Anytime you save a file all the changes you made get hotloaded into your local and all remote nodes.  
 Now you have a space construction vehicle to go along with your space language :)
 
+### Installation
+run the Makefile to build the inotify NIF.
+
 ### Usage
 ```
 scv:start().  %Default arguments

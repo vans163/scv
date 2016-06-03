@@ -93,6 +93,7 @@ static ERL_NIF_TERM read_no_nameconflict(ErlNifEnv* env, int argc, const ERL_NIF
     if (n == -1 && errno != EAGAIN)
         return mk_errno(env);
 
+    //We got EAGAIN
     if (n <= 0) 
         return mk_errno(env);
 
