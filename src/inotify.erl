@@ -5,7 +5,7 @@
 
 load_nif() -> 
     Path = [_ | _] = code:priv_dir(scv),
-    FullPath = filename:join([Path, "scv_drv"]),
+    FullPath = filename:join([Path, "inotify"]),
     erlang:load_nif(FullPath, 0).
     
 init() -> "NIF library not loaded".
