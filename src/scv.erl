@@ -2,7 +2,7 @@
 
 -export([start/0, start/1]). 
 -export([good_to_go/1, recurse_all_folders/1, hotload_file/1]).
-
+-export([remote_watcher/1]).
 
 -ifndef(PRINT).
 -define(PRINT(Var), io:format("~p:~p - ~p~n", [?MODULE, ?LINE, Var])).
@@ -18,10 +18,44 @@ start(#{}=Opts) ->
     RemoteCompile = maps:get(remote_compile, Opts, true),
     RemoteNodes = maps:get(remote_nodes, Opts, []),
 
+    spawn(scv, remote_watcher, [RemoteNodes]),
+
     FoldersToMonitor = recurse_all_folders(SrcPaths),
 
     scv_sup:start_link(),
     spawn_initial(lists:merge(SrcPaths,FoldersToMonitor))
+    .
+
+remote_watcher([]) -> pass;
+remote_watcher(Nodes) ->
+    ConnectedNodes = nodes(),
+    lists:foreach(fun(Node) ->
+            case lists:member(Node, ConnectedNodes) of
+                true -> pass;
+                false -> 
+                    Ping = net_adm:ping(Node),
+                    ?PRINT({"Pinging", Node, Ping}),
+                    case Ping of
+                        pang -> pass;
+                        pong ->
+                            %Node joined our cluster, hotload all beams
+                            BeamFiles = filelib:wildcard("./**/*.beam"),
+                            lists:foreach(fun(BeamPath) ->
+                                    [_, {module, Module}, _] = beam_lib:info(BeamPath),
+                                    {_, Binary, Filename} = code:get_object_code(Module),
+                                    {_, []} = rpc:multicall(code, load_binary, [Module, Filename, Binary]),
+                                    ?PRINT({"Netloaded:", Filename, Module})
+                                end,
+                                BeamFiles
+                            )
+
+                    end
+            end
+        end,
+        Nodes
+    ),
+    timer:sleep(2000),
+    remote_watcher(Nodes)
     .
 
 
@@ -39,10 +73,17 @@ hotload_file(FullPath) ->
         ".ex" -> 
             ?PRINT({"Got elixir file", FullPath}),
             %{EExTest.Compiled, <<70, 79, 82, 49, ...>>}
-            ModList = apply('Elixir.Code', 'load_file', [unicode:characters_to_binary(FullPath)]),
-            lists:foreach(fun({Module, Bin}) ->
-                {_, []} = rpc:multicall(code, load_binary, [Module, FullPath, Bin])
-            end, ModList);
+            try
+                %Elixir.Code.load_file crashes if it fails to compile, ignore it
+                ModList = apply('Elixir.Code', 'load_file', [unicode:characters_to_binary(FullPath)]),
+                lists:foreach(fun({Module, Bin}) ->
+                    {_, []} = rpc:multicall(code, load_binary, [Module, FullPath, Bin])
+                end, ModList)
+            of
+                _ -> pass
+            catch
+                error:E -> ?PRINT({"Compile error", E})
+            end;
 
         _ -> pass
     end

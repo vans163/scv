@@ -4,7 +4,14 @@
 -export([init/0, add_watch/3, rm_watch/2, read/1]).
 
 load_nif() -> 
-    Path = [_ | _] = code:priv_dir(scv),
+    Path = case code:priv_dir(scv) of
+        {error, _} ->
+            EbinDir = filename:dirname(code:which(scv)),
+            AppPath = filename:dirname(EbinDir),
+            filename:join(AppPath, "priv");
+        Pathe ->
+            Pathe
+    end,
     FullPath = filename:join([Path, "inotify"]),
     erlang:load_nif(FullPath, 0).
     
