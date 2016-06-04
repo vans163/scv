@@ -28,7 +28,7 @@ start(#{}=Opts) ->
 hotload_file(FullPath) ->
     case filename:extension(FullPath) of
         ".erl" -> 
-            ?PRINT({"Got erlang file"}),
+            ?PRINT({"Got erlang file", FullPath}),
             case compile:file(FullPath, {outdir, "./ebin"}) of
                 {ok, Mod} ->
                     {_, Binary, Filename} = code:get_object_code(Mod),
@@ -37,9 +37,9 @@ hotload_file(FullPath) ->
             end;
 
         ".ex" -> 
-            ?PRINT({"Got elixir file"}),
+            ?PRINT({"Got elixir file", FullPath}),
             %{EExTest.Compiled, <<70, 79, 82, 49, ...>>}
-            ModList = apply('Elixir.Code', 'load_file', [FullPath]),
+            ModList = apply('Elixir.Code', 'load_file', [unicode:characters_to_binary(FullPath)]),
             lists:foreach(fun({Module, Bin}) ->
                 {_, []} = rpc:multicall(code, load_binary, [Module, FullPath, Bin])
             end, ModList);
