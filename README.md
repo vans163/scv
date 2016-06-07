@@ -22,6 +22,8 @@ scv:start(#{
 ```
 
 ### Known bugs
+any recorddef - Files using the record def need to be recompiled also
+
 Makefile - assumes your erlang include path is /usr/lib/erlang/usr/include/.  
 inotify.c add_watch - does not accept a utf-8 binary yet because I am lazy. (it returns a utf-8 binary)  
 inotify.c read - the cookie is returned as an int, should be uint. I am not sure how to return a uint/int64.  
