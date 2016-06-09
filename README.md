@@ -22,8 +22,8 @@ scv:start(#{
 ```
 
 ### Known bugs
-any recorddef - Files using the record def need to be recompiled also
-C NIFS - on_load fails as C NIF paths are often wrong.
+any recorddef - Files using the record def need to be recompiled also  
+C NIFS - on_load fails as C NIF paths are often wrong.  
 
 Makefile - assumes your erlang include path is /usr/lib/erlang/usr/include/.  
 inotify.c add_watch - does not accept a utf-8 binary yet because I am lazy. (it returns a utf-8 binary)  
