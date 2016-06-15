@@ -10,7 +10,7 @@ Anytime you save a file, all the changes you made get hotloaded into your local 
 run the Makefile to build the inotify NIF.
 
 ### Usage
-```
+```erlang
 scv:start().  %Default arguments
 
 scv:start(#{
