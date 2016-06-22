@@ -41,6 +41,7 @@ remote_watcher(Nodes) ->
                             %Node joined our cluster, hotload all beams
                             BeamFiles = filelib:wildcard("./**/*.beam"),
                             lists:foreach(fun(BeamPath) ->
+                                    ?PRINT({"Loading..", BeamPath}),
                                     [_, {module, Module}, _] = beam_lib:info(BeamPath),
                                     {_, Binary, Filename} = code:get_object_code(Module),
                                     {_, []} = rpc:multicall(code, load_binary, [Module, Filename, Binary]),
