@@ -2,6 +2,10 @@
 # scv
 Erlang /w Elixir, automated distributed build system.
 
+### Status
+SCV is currently deprecated infavor of rebar3_auto.  
+For Elixir since 1.3.0 recompile works correctly now without killing the running app. Thus deprecating SCV for Elixir.  
+
 ### Point
 SCV was made to give you a true interactive coding experience.  
 Anytime you save a file, all the changes you made get hotloaded into your local and all remote nodes.  
